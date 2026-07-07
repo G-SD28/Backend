@@ -1,4 +1,4 @@
-import type { RequestHandler, Request, Response } from "express";
+import type { RequestHandler } from "express";
 import { User } from "#models";
 import { isValidObjectId } from "mongoose";
 
@@ -8,10 +8,7 @@ type User = {
   email: string;
 };
 
-export const getAllUsers: RequestHandler = async (
-  req: Request,
-  res: Response,
-) => {
+export const getAllUsers: RequestHandler = async (req, res) => {
   try {
     const allUsers = await User.find();
     res.json(allUsers);
@@ -24,9 +21,9 @@ export const getAllUsers: RequestHandler = async (
   }
 };
 
-export const createUser: RequestHandler<{}, {}, User> = async (
-  req: Request,
-  res: Response,
+export const createUser: RequestHandler<unknown, unknown, User> = async (
+  req,
+  res,
 ) => {
   try {
     const { firstName, lastName, email } = req.body;
@@ -49,10 +46,7 @@ export const createUser: RequestHandler<{}, {}, User> = async (
   }
 };
 
-export const getUserById: RequestHandler<{ id: string }> = async (
-  req: Request,
-  res: Response,
-) => {
+export const getUserById: RequestHandler<{ id: string }> = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -76,9 +70,9 @@ export const getUserById: RequestHandler<{ id: string }> = async (
   }
 };
 
-export const updateUser: RequestHandler<{ id: string }, {}, User> = async (
-  req: Request,
-  res: Response,
+export const updateUser: RequestHandler<{ id: string }, unknown, User> = async (
+  req,
+  res,
 ) => {
   try {
     const { firstName, lastName, email } = req.body;
@@ -118,10 +112,7 @@ export const updateUser: RequestHandler<{ id: string }, {}, User> = async (
   }
 };
 
-export const deleteUser: RequestHandler<{ id: string }> = async (
-  req: Request,
-  res: Response,
-) => {
+export const deleteUser: RequestHandler<{ id: string }> = async (req, res) => {
   try {
     const { id } = req.params;
 

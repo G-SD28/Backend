@@ -1,4 +1,4 @@
-import express, { type Express, type Request, type Response } from "express";
+import express, { type Express } from "express";
 import "#db";
 import { userRouter } from "#routers";
 
@@ -9,7 +9,7 @@ app.use(express.json());
 
 app.use("/users", userRouter);
 
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
