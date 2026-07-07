@@ -1,13 +1,14 @@
-import express, { type Express } from "express";
+import express from "express";
 import "#db";
-import { userRouter } from "#routers";
+import { userRouter, postRouter } from "#routers";
 
-const app: Express = express();
+const app = express();
 const port = 3000;
 
 app.use(express.json());
 
 app.use("/users", userRouter);
+app.use("/posts", postRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
