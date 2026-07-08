@@ -10,7 +10,7 @@ type User = {
 
 export const getAllUsers: RequestHandler = async (req, res) => {
   const allUsers = await User.find();
-  res.json(allUsers);
+  res.status(200).json(allUsers);
 };
 
 export const createUser: RequestHandler<unknown, unknown, User> = async (
@@ -36,7 +36,7 @@ export const getUserById: RequestHandler<{ id: string }> = async (req, res) => {
   if (!user) {
     throw new Error("No user found with the provided ID", { cause: 404 });
   }
-  res.json(user);
+  res.status(200).json(user);
 };
 
 export const updateUser: RequestHandler<{ id: string }, unknown, User> = async (
@@ -65,7 +65,7 @@ export const updateUser: RequestHandler<{ id: string }, unknown, User> = async (
   if (!user) {
     throw new Error("No user found with the provided ID", { cause: 404 });
   }
-  res.json(user);
+  res.status(200).json(user);
 };
 
 export const deleteUser: RequestHandler<{ id: string }> = async (req, res) => {
