@@ -19,7 +19,7 @@ export const createUser: RequestHandler<unknown, unknown, User> = async (
 ) => {
   const { firstName, lastName, email } = req.body;
   if (!firstName || !lastName || !email) {
-    throw new Error("Missing required fields: firstName, lastName and email.", {
+    throw new Error("Missing required fields: firstName, lastName and email", {
       cause: 400,
     });
   }
@@ -30,11 +30,11 @@ export const createUser: RequestHandler<unknown, unknown, User> = async (
 export const getUserById: RequestHandler<{ id: string }> = async (req, res) => {
   const { id } = req.params;
   if (!isValidObjectId(id)) {
-    throw new Error("Invalid user ID format.", { cause: 400 });
+    throw new Error("Invalid user ID format", { cause: 400 });
   }
   const user = await User.findById(id);
   if (!user) {
-    throw new Error("No user found with the provided ID.", { cause: 404 });
+    throw new Error("No user found with the provided ID", { cause: 404 });
   }
   res.json(user);
 };
@@ -46,12 +46,12 @@ export const updateUser: RequestHandler<{ id: string }, unknown, User> = async (
   const { firstName, lastName, email } = req.body;
   const { id } = req.params;
   if (!firstName || !lastName) {
-    throw new Error("Missing required fields: firstName and lastName.", {
+    throw new Error("Missing required fields: firstName and lastName", {
       cause: 400,
     });
   }
   if (!isValidObjectId(id)) {
-    throw new Error("Invalid user ID format.", { cause: 400 });
+    throw new Error("Invalid user ID format", { cause: 400 });
   }
   const user = await User.findByIdAndUpdate(
     id,
@@ -63,7 +63,7 @@ export const updateUser: RequestHandler<{ id: string }, unknown, User> = async (
     { returnDocument: "after" },
   );
   if (!user) {
-    throw new Error("No user found with the provided ID.", { cause: 404 });
+    throw new Error("No user found with the provided ID", { cause: 404 });
   }
   res.json(user);
 };
@@ -71,11 +71,11 @@ export const updateUser: RequestHandler<{ id: string }, unknown, User> = async (
 export const deleteUser: RequestHandler<{ id: string }> = async (req, res) => {
   const { id } = req.params;
   if (!isValidObjectId(id)) {
-    throw new Error("Invalid user ID format.", { cause: 400 });
+    throw new Error("Invalid user ID format", { cause: 400 });
   }
   const user = await User.findByIdAndDelete(id);
   if (!user) {
-    throw new Error("No user found with the provided ID.", { cause: 404 });
+    throw new Error("No user found with the provided ID", { cause: 404 });
   }
-  res.status(204).json({ message: "User deleted successfully." });
+  res.status(204).json({ message: "User deleted successfully" });
 };

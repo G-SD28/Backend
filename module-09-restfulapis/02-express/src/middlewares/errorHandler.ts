@@ -9,7 +9,7 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   res.status(statusCode).json({
     error:
       process.env.NODE_ENV === "production"
-        ? "Internal server error."
+        ? "Internal server error"
         : err.message,
   });
 };

@@ -5,7 +5,7 @@ const userSchema = new Schema({
   lastName: { type: String, required: true },
   email: {
     type: String,
-    required: [true, "Email wird benötigt!"],
+    required: [true, "Email is required"],
     unique: true,
   },
   createdAt: { type: Date, default: Date.now },
