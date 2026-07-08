@@ -9,129 +9,73 @@ type User = {
 };
 
 export const getAllUsers: RequestHandler = async (req, res) => {
-  try {
-    const allUsers = await User.find();
-    res.json(allUsers);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: "Etwas ist schief gelaufen!" });
-    }
-  }
+  const allUsers = await User.find();
+  res.json(allUsers);
 };
 
 export const createUser: RequestHandler<unknown, unknown, User> = async (
   req,
   res,
 ) => {
-  try {
-    const { firstName, lastName, email } = req.body;
-
-    if (!firstName || !lastName || !email) {
-      return res.status(400).json({ message: "Fehlende Informationen!" });
-    }
-
-    const newUser = await User.create(req.body);
-
-    res.status(201).json(newUser);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
-    } else {
-      res
-        .status(500)
-        .json({ message: "Ressource konnte nicht erstellt werden!" });
-    }
+  const { firstName, lastName, email } = req.body;
+  if (!firstName || !lastName || !email) {
+    throw new Error("Missing required fields: firstName, lastName and email.", {
+      cause: 400,
+    });
   }
+  const newUser = await User.create(req.body);
+  res.status(201).json(newUser);
 };
 
 export const getUserById: RequestHandler<{ id: string }> = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    if (!isValidObjectId(id))
-      return res.status(400).json({ error: "Falsche ID!" });
-
-    const user = await User.findById(id);
-
-    if (!user)
-      return res
-        .status(404)
-        .json({ error: "Nutzer konnte nicht gefunden werden!" });
-
-    res.json(user);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: "Etwas ist schief gelaufen!" });
-    }
+  const { id } = req.params;
+  if (!isValidObjectId(id)) {
+    throw new Error("Invalid user ID format.", { cause: 400 });
   }
+  const user = await User.findById(id);
+  if (!user) {
+    throw new Error("No user found with the provided ID.", { cause: 404 });
+  }
+  res.json(user);
 };
 
 export const updateUser: RequestHandler<{ id: string }, unknown, User> = async (
   req,
   res,
 ) => {
-  try {
-    const { firstName, lastName, email } = req.body;
-    const { id } = req.params;
-
-    if (!firstName || !lastName) {
-      return res.status(400).json({ message: "Fehlende Informationen!" });
-    }
-
-    if (!isValidObjectId(id))
-      return res.status(400).json({ error: "Falsche ID!" });
-
-    const user = await User.findByIdAndUpdate(
-      id,
-      {
-        firstName,
-        lastName,
-        email,
-      },
-      { returnDocument: "after" },
-    );
-
-    if (!user)
-      return res
-        .status(404)
-        .json({ error: "Nutzer konnte nicht gefunden werden!" });
-
-    res.json(user);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
-    } else {
-      res
-        .status(500)
-        .json({ message: "Ressource konnte nicht erstellt werden!" });
-    }
+  const { firstName, lastName, email } = req.body;
+  const { id } = req.params;
+  if (!firstName || !lastName) {
+    throw new Error("Missing required fields: firstName and lastName.", {
+      cause: 400,
+    });
   }
+  if (!isValidObjectId(id)) {
+    throw new Error("Invalid user ID format.", { cause: 400 });
+  }
+  const user = await User.findByIdAndUpdate(
+    id,
+    {
+      firstName,
+      lastName,
+      email,
+    },
+    { returnDocument: "after" },
+  );
+  if (!user) {
+    throw new Error("No user found with the provided ID.", { cause: 404 });
+  }
+  res.json(user);
 };
 
 export const deleteUser: RequestHandler<{ id: string }> = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    if (!isValidObjectId(id))
-      return res.status(400).json({ error: "Falsche ID!" });
-
-    const user = await User.findByIdAndDelete(id);
-
-    if (!user)
-      return res
-        .status(404)
-        .json({ error: "Nutzer konnte nicht gefunden werden!" });
-
-    res.json({ message: "User wurde gelöscht!" });
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: "Etwas ist schief gelaufen!" });
-    }
+  const { id } = req.params;
+  if (!isValidObjectId(id)) {
+    throw new Error("Invalid user ID format.", { cause: 400 });
   }
+  const user = await User.findByIdAndDelete(id);
+  if (!user) {
+    throw new Error("No user found with the provided ID.", { cause: 404 });
+  }
+  res.status(204).json({ message: "User deleted successfully." });
 };
