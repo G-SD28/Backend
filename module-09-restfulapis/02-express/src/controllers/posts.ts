@@ -1,86 +1,77 @@
 import type { RequestHandler } from "express";
 import { Post } from "#models";
 import { isValidObjectId } from "mongoose";
+import * as z from "zod";
+import { postInputSchema } from "#schemas";
+import type { Types } from "mongoose";
+import type { IdParams } from "#types";
 
-type Post = {
-  title: string;
-  body: string;
-  author: string;
+type PostInputDTO = z.infer<typeof postInputSchema>;
+type PostDTO = Omit<PostInputDTO, "author"> & {
+  author: InstanceType<typeof Types.ObjectId>;
+  _id: InstanceType<typeof Types.ObjectId>;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
-export const getAllPosts: RequestHandler = async (req, res) => {
-  const allPosts = await Post.find().populate(
-    "author",
-    "firstName lastName -_id",
-  );
+export const getAllPosts: RequestHandler<unknown, PostDTO[]> = async (
+  req,
+  res,
+) => {
+  const allPosts = await Post.find()
+    .populate("author", "firstName lastName -_id")
+    .lean()
+    .sort({ createdAt: -1 });
   res.status(200).json(allPosts);
 };
 
-export const createPost: RequestHandler<unknown, unknown, Post> = async (
-  req,
-  res,
-) => {
-  const { title, body, author } = req.body;
-  if (!title || !body || !author) {
-    throw new Error("Missing required fields: title, body and author", {
-      cause: 400,
-    });
-  }
-  if (!isValidObjectId(author)) {
-    throw new Error("Invalid author ID format", { cause: 400 });
-  }
-  const newPost = await Post.create(req.body);
+export const createPost: RequestHandler<
+  unknown,
+  PostDTO,
+  PostInputDTO
+> = async (req, res) => {
+  const newPost = await Post.create(req.body satisfies PostInputDTO);
   res.status(201).json(newPost);
 };
 
-export const getPostById: RequestHandler<{ id: string }> = async (req, res) => {
-  const { id } = req.params;
-  if (!isValidObjectId(id)) {
-    throw new Error("Invalid post ID format", { cause: 400 });
-  }
-  const post = await Post.findById(id);
-  if (!post) {
-    throw new Error("No post found with the provided ID", { cause: 404 });
-  }
-  res.status(200).json(post);
-};
-
-export const updatePost: RequestHandler<{ id: string }, unknown, Post> = async (
+export const getPostById: RequestHandler<IdParams, PostDTO> = async (
   req,
   res,
 ) => {
-  const { title, body, author } = req.body;
-  const { id } = req.params;
-  if (!title || !body || !author) {
-    throw new Error("Missing required fields: title, body and author", {
-      cause: 400,
-    });
+  if (!isValidObjectId(req.params.id)) {
+    throw new Error("Invalid ID", { cause: 400 });
   }
-  if (!isValidObjectId(id)) {
-    throw new Error("Invalid post ID format", { cause: 400 });
-  }
-  if (!isValidObjectId(author)) {
-    throw new Error("Invalid author ID format", { cause: 400 });
-  }
-  const post = await Post.findByIdAndUpdate(
-    id,
-    { title, body, author },
-    { returnDocument: "after" },
-  );
+  const post = await Post.findById(req.params.id).lean();
   if (!post) {
-    throw new Error("No post found with the provided ID", { cause: 404 });
+    throw new Error("Post not found", { cause: 404 });
   }
   res.status(200).json(post);
 };
 
-export const deletePost: RequestHandler<{ id: string }> = async (req, res) => {
-  const { id } = req.params;
-  if (!isValidObjectId(id)) {
-    throw new Error("Invalid post ID format", { cause: 400 });
+export const updatePost: RequestHandler<
+  IdParams,
+  PostDTO,
+  PostInputDTO
+> = async (req, res) => {
+  if (!isValidObjectId(req.params.id)) {
+    throw new Error("Invalid ID", { cause: 400 });
   }
-  const post = await Post.findByIdAndDelete(id);
+  const post = await Post.findByIdAndUpdate(req.params.id, req.body, {
+    returnDocument: "after",
+  }).lean();
   if (!post) {
-    throw new Error("No post found with the provided ID", { cause: 404 });
+    throw new Error("Post not found", { cause: 404 });
+  }
+  res.status(200).json(post);
+};
+
+export const deletePost: RequestHandler<IdParams> = async (req, res) => {
+  if (!isValidObjectId(req.params.id)) {
+    throw new Error("Invalid ID", { cause: 400 });
+  }
+  const post = await Post.findByIdAndDelete(req.params.id);
+  if (!post) {
+    throw new Error("Post not found", { cause: 404 });
   }
   res.status(204).json({ message: "Post deleted successfully" });
 };

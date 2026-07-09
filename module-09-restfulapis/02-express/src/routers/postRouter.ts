@@ -6,10 +6,19 @@ import {
   updatePost,
   deletePost,
 } from "#controllers";
+import { validateBody } from "#middlewares";
+import { postInputSchema } from "#schemas";
 
-const userRouter = Router();
+const postRouter = Router();
 
-userRouter.route("/").get(getAllPosts).post(createPost);
-userRouter.route("/:id").get(getPostById).put(updatePost).delete(deletePost);
+postRouter
+  .route("/")
+  .get(getAllPosts)
+  .post(validateBody(postInputSchema), createPost);
+postRouter
+  .route("/:id")
+  .get(getPostById)
+  .put(validateBody(postInputSchema), updatePost)
+  .delete(deletePost);
 
-export default userRouter;
+export default postRouter;
