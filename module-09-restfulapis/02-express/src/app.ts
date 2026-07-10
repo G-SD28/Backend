@@ -14,10 +14,6 @@ app.use(logger);
 app.use("/users", userRouter);
 app.use("/posts", postRouter);
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
 app.all("/*splat", async (req, res) => {
   throw new Error("Page not found", { cause: 404 });
 });

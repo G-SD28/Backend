@@ -1,14 +1,13 @@
-import type { RequestHandler } from "express";
-import { User } from "#models";
+import type { RequestHandler } from 'express';
+import { User } from '#models';
 
-type UserType = {
+type UserInputType = {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
   isActive?: boolean;
 };
-
 
 export const getUsers: RequestHandler = async (req, res) => {
   try {
@@ -23,9 +22,9 @@ export const getUsers: RequestHandler = async (req, res) => {
   }
 };
 
-export const createUser: RequestHandler<unknown, unknown, UserType> = async (req, res) => {
+export const createUser: RequestHandler<unknown, unknown, UserInputType> = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, isActive } = req.body as UserType;
+    const { firstName, lastName, email, password, isActive } = req.body as UserInputType;
     if (!firstName || !lastName || !email || !password)
       return res.status(400).json({ error: 'firstName, lastName, email, and password are required' });
     const found = await User.findOne({ email });
@@ -64,7 +63,7 @@ export const updateUser: RequestHandler = async (req, res) => {
       body,
       params: { id }
     } = req;
-    const { firstName, lastName, email } = body as UserType;
+    const { firstName, lastName, email } = body as UserInputType;
     if (!firstName || !lastName || !email)
       return res.status(400).json({ error: 'firstName, lastName, and email are required' });
     const user = await User.findById(id);

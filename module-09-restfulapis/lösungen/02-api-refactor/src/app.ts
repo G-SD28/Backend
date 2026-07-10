@@ -1,7 +1,7 @@
 import express, { type RequestHandler } from 'express';
 import mongoose, { Schema, model } from 'mongoose';
 
-type UserType = {
+type UserInputType = {
   firstName: string;
   lastName: string;
   email: string;
@@ -9,7 +9,7 @@ type UserType = {
   isActive?: boolean;
 };
 
-type PostType = {
+type PostInputType = {
   title: string;
   content: string;
   userId: string;
@@ -99,9 +99,9 @@ const getUsers: RequestHandler = async (req, res) => {
   }
 };
 
-const createUser: RequestHandler<unknown, unknown, UserType> = async (req, res) => {
+const createUser: RequestHandler<unknown, unknown, UserInputType> = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, isActive } = req.body as UserType;
+    const { firstName, lastName, email, password, isActive } = req.body as UserInputType;
     if (!firstName || !lastName || !email || !password)
       return res.status(400).json({ error: 'firstName, lastName, email, and password are required' });
     const found = await User.findOne({ email });
@@ -140,7 +140,7 @@ const updateUser: RequestHandler = async (req, res) => {
       body,
       params: { id }
     } = req;
-    const { firstName, lastName, email } = body as UserType;
+    const { firstName, lastName, email } = body as UserInputType;
     if (!firstName || !lastName || !email)
       return res.status(400).json({ error: 'firstName, lastName, and email are required' });
     const user = await User.findById(id);
@@ -189,9 +189,9 @@ const getPosts: RequestHandler = async (req, res) => {
   }
 };
 
-const createPost: RequestHandler<unknown, unknown, PostType> = async (req, res) => {
+const createPost: RequestHandler<unknown, unknown, PostInputType> = async (req, res) => {
   try {
-    const { title, content, userId } = req.body as PostType;
+    const { title, content, userId } = req.body as PostInputType;
     if (!title || !content || !userId)
       return res.status(400).json({ error: 'title, content, and userId are required' });
     const post = await Post.create({ title, content, userId });

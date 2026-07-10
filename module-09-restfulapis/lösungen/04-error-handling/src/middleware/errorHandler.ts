@@ -5,7 +5,7 @@ import { join } from 'node:path';
 const LOG_DIR = 'log';
 
 function getLogFilePath(): string {
-  const date = new Date().toISOString().slice(0, 10); // yyyy-mm-dd
+  const date = new Date().toISOString().slice(0, 10);
   return join(LOG_DIR, `${date}-error.log`);
 }
 
@@ -16,11 +16,9 @@ async function writeToLog(err: Error, req: { method: string; path: string }, sta
     .catch(() => {});
 }
 
-export const errorHandler: ErrorRequestHandler = async (err, req, res, next) => {
+const errorHandler: ErrorRequestHandler = async (err, req, res, next) => {
   const status: number =
-    typeof err.status === 'number' ? err.status
-    : typeof err.statusCode === 'number' ? err.statusCode
-    : 500;
+    typeof err.status === 'number' ? err.status : typeof err.statusCode === 'number' ? err.statusCode : 500;
 
   const message: string = err.message ?? 'Internal Server Error';
 
@@ -28,3 +26,5 @@ export const errorHandler: ErrorRequestHandler = async (err, req, res, next) => 
 
   res.status(status).json({ message });
 };
+
+export default errorHandler;

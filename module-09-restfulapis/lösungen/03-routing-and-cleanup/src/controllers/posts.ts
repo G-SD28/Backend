@@ -1,7 +1,7 @@
-import type { RequestHandler } from "express";
-import { Post } from "#models";
+import type { RequestHandler } from 'express';
+import { Post } from '#models';
 
-type PostType = {
+type PostInputType = {
   title: string;
   content: string;
   userId: string;
@@ -20,9 +20,9 @@ export const getPosts: RequestHandler = async (req, res) => {
   }
 };
 
-export const createPost: RequestHandler<unknown, unknown, PostType> = async (req, res) => {
+export const createPost: RequestHandler<unknown, unknown, PostInputType> = async (req, res) => {
   try {
-    const { title, content, userId } = req.body as PostType;
+    const { title, content, userId } = req.body as PostInputType;
     if (!title || !content || !userId)
       return res.status(400).json({ error: 'title, content, and userId are required' });
     const post = await Post.create({ title, content, userId });

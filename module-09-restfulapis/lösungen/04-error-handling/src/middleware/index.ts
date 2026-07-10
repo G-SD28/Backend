@@ -1,1 +1,1 @@
-export * from './errorHandler.ts';
+export { default as errorHandler } from './errorHandler.ts';
