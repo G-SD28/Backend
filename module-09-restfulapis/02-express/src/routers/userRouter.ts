@@ -7,6 +7,8 @@ import {
   deleteUser,
 } from "#controllers";
 import type { RequestHandler } from "express";
+import { validateBody } from "#middlewares";
+import { userInputSchema } from "#schemas";
 
 // Route-level middleware
 const logUserRequest: RequestHandler = (req, res, next) => {
@@ -19,7 +21,14 @@ const logUserRequest: RequestHandler = (req, res, next) => {
 
 const userRouter = Router();
 
-userRouter.route("/").get(logUserRequest, getAllUsers).post(createUser);
-userRouter.route("/:id").get(getUserById).put(updateUser).delete(deleteUser);
+userRouter
+  .route("/")
+  .get(logUserRequest, getAllUsers)
+  .post(validateBody(userInputSchema), createUser);
+userRouter
+  .route("/:id")
+  .get(getUserById)
+  .put(validateBody(userInputSchema), updateUser)
+  .delete(deleteUser);
 
 export default userRouter;
