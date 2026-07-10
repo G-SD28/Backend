@@ -5,11 +5,11 @@
   "main": "dist/app.js",
   "type": "module",
   "scripts": {
-    "dev": "node --env-file=.env.development.local --watch --conditions development src/app.ts",
+    "dev": "node --watch --conditions development --env-file=.env src/app.ts",
     "prebuild": "rm -rf dist",
     "build": "tsc",
     "prestart": "npm run build",
-    "start": "node --env-file=.env.production.local dist/app.js"
+    "start": "node --env-file=.env dist/app.js"
   },
   "keywords": [],
   "author": "",
