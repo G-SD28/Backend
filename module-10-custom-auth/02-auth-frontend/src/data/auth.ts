@@ -1,0 +1,59 @@
+import { VITE_APP_TRAVEL_JOURNAL_API_URL } from '@/config';
+
+const baseURL: string = `${VITE_APP_TRAVEL_JOURNAL_API_URL}/auth`;
+
+export async function register(body: User & { password: string }) {
+	const { firstName, lastName, email, password } = body;
+
+	const res = await fetch(`${baseURL}/register`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+
+		body: JSON.stringify({
+			firstName,
+			lastName,
+			email,
+			password,
+			roles: ['user'],
+		}),
+		credentials: 'include',
+	});
+
+	if (!res.ok) throw new Error('Registration failed');
+	const data = await res.json();
+	return data;
+}
+
+export async function login(body: { email: string; password: string }) {
+	const { email, password } = body;
+	const res = await fetch(`${baseURL}/login`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ email, password }),
+		credentials: 'include',
+	});
+	if (!res.ok) throw new Error('Login failed');
+	const data = await res.json();
+	return data;
+}
+
+export async function logout() {
+	const res = await fetch(`${baseURL}/logout`, {
+		method: 'DELETE',
+		credentials: 'include',
+	});
+
+	if (!res.ok) throw new Error('Logout failed');
+}
+
+export async function getMe() {
+	const userRes = await fetch(`${baseURL}/me`, {
+		credentials: 'include',
+	});
+	if (!userRes.ok) throw new Error('Refresh loging failed');
+	return userRes.json();
+}
