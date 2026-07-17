@@ -1,4 +1,5 @@
 import { VITE_APP_TRAVEL_JOURNAL_API_URL } from '@/config';
+import '../utils/index';
 
 const baseURL: string = `${VITE_APP_TRAVEL_JOURNAL_API_URL}/auth`;
 
@@ -56,4 +57,13 @@ export async function getMe() {
 	});
 	if (!userRes.ok) throw new Error('Refresh loging failed');
 	return userRes.json();
+}
+
+export async function refresh() {
+	const refreshRes = await fetch(`${baseURL}/refresh`, {
+		method: 'POST',
+		credentials: 'include',
+	});
+
+	if (!refreshRes.ok) return;
 }
